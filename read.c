@@ -53,7 +53,8 @@ char* read_word(FILE* file) {
 char** read_words(FILE* file, const char* delimiters) {
     /*Read a line from a stream and return a pointer to the array of words
     * split based on delimiters specified in the array pointed to by delimiters, 
-    * or, in the case of a NULL pointer, split based on punctuation marks*/    
+    * or, in the case of a NULL pointer, split based on space and/or punctuation 
+    * marks: .,:;-!?'"*/    
     int buffer = 50, i = 0;
     char *line = read_line(file), **words = malloc(buffer * sizeof(char*));
     if (!delimiters) {
@@ -75,8 +76,11 @@ char** read_words(FILE* file, const char* delimiters) {
         }
         token = strtok(NULL, delimiters);
     }
-    words[i] = NULL;
-    return words;
+    if (i) {
+        words[i] = NULL;
+        return words;
+    }
+    return NULL;
 }
 
 char* read_line(FILE* file) {
@@ -85,9 +89,7 @@ char* read_line(FILE* file) {
 	int buffer = 50, i = 0;
 	char *line = malloc(buffer * sizeof(char));
 	for (int c = 0; (c = getc(file)) != '\n' && c != EOF;) {
-		if (c != '\r') {
-			line[i++] = c;
-		}
+		line[i++] = c;		
 		if (i == buffer - 1) {
 			buffer *= 2;
 			char *line_new = realloc(line, buffer);
@@ -111,16 +113,16 @@ char* read_line(FILE* file) {
 char** read_lines(const char *filename) {
     //Read lines from a text file and return a pointer to the array of strings
 	int buffer = 50, i = 0;
-	char *line, **txt = malloc(buffer * sizeof(char*));
+	char *line, **lines = malloc(buffer * sizeof(char*));
 	FILE *file = fopen(filename, "r");
 	if (file) {
 		while ((line = read_line(file))) {
-			txt[i++] = line;
+			lines[i++] = line;
 			if (i == buffer - 2) {
 				buffer *= 2;
-				char **txt_new = realloc(txt, buffer);
-				if (txt_new) {
-					txt = txt_new;
+				char **lines_new = realloc(lines, buffer);
+				if (lines_new) {
+					lines = lines_new;
 				}
 				else {
 	    			perror("Error");
@@ -128,48 +130,78 @@ char** read_lines(const char *filename) {
 	    		}
 			}
 		}
-		txt[i] = NULL;		
+		lines[i] = NULL;
+        fclose(file);
+        return lines;		
 	}
-    else {
-    	perror("Error");
-		return NULL;
-    }
-    fclose(file);
-	return txt;
-}
-
-char* input(const char* prompt) {
-    //Print a prompt to and read a line from standard input and return a pointer to the string 
-    printf("%s", prompt);
-    char *line = read_line(stdin);
-    return line;
+	perror("Error");
+	return NULL;    
 }
 
 char* read_file(const char *filename) {
-	int c, i = 0, buffer = 1024;
-	char *txt = malloc(buffer * sizeof(char));
-	FILE *file = fopen(filename, "r");
-	if (file) {
-		gobble_leading_space(file);
-	    while ((c = getc(file)) != EOF) {
-	    	txt[i] = c;
-	    	if (++i == buffer-2) {
-	    		buffer *= 2;
-	    		char *txt_new = realloc(txt, buffer);
-	    		if (txt_new) {
-	    			txt = txt_new;
-	    		}
-	    		else {
-	    			perror("Error");
-	    			break;
-	    		}
-	    	}
-	    }	    	
-	    fclose(file);
-	    txt[i] = '\0';
-	}
-    else {
-		return NULL;
+    //Read a text file into a string and return a pointer to the string
+    int c, i = 0, buffer = 1024;
+    char *txt = malloc(buffer * sizeof(char));
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        gobble_leading_space(file);
+        while ((c = getc(file)) != EOF) {
+            txt[i] = c;
+            if (++i == buffer-2) {
+                buffer *= 2;
+                char *txt_new = realloc(txt, buffer);
+                if (txt_new) {
+                    txt = txt_new;
+                }
+                else {
+                    perror("Error");
+                    break;
+                }
+            }
+        }
+        txt[i] = '\0';           
+        fclose(file);
+        return txt;       
     }
-	return txt;
+    perror("Error");
+    return NULL;    
+}
+
+char*** read_csv(const char* filename, const char delimiter) {
+    /*Read a csv file and return a pointer to the array of arrays of strings
+    * split based on delimiter*/
+    int i = 0, buffer = 50;
+    char ***csv = malloc(buffer * sizeof(char**)), **values;
+    FILE *file = fopen(filename, "r");
+    if (file) {
+        gobble_leading_space(file);
+        char separator[] = {delimiter, ' ', ' ', '\0'}; //strip trailing space
+        while ((values = read_words(file, separator))) {
+            csv[i++] = values;
+            if (i == buffer-2) {
+                buffer *= 2;
+                char ***csv_new = realloc(csv, buffer);
+                if (csv_new) {
+                    csv = csv_new;
+                }
+                else {
+                    perror("Error");
+                    break;
+                }
+            }
+        }
+        csv[i] = NULL;
+        fclose(file);
+        return csv;
+    }
+    perror("Error");
+    return NULL;
+}
+
+char* input(const char* prompt) {
+    /*Print a prompt to and read a line from standard input and return a pointer 
+    * to the string*/
+    printf("%s", prompt);
+    char *line = read_line(stdin);
+    return line;
 }
