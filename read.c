@@ -1,3 +1,5 @@
+#include "read.h"
+
 static void gobble_leading_space(FILE *file) {
     //Remove all leading whitespace from a stream
 	for (int c = 0; (c = getc(file)) != EOF;) {

@@ -17,7 +17,7 @@ char* input(const char *prompt);
 char* scan_folder(const char *ext);
 
 #if defined(_WIN32) || defined(_WIN64)
-#define CMD "dir /b *.%s > shell_result" //25
+#define CMD "dir /b *.%s > shell_result"
 #endif
 
 #if defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__unix__)
