@@ -5,6 +5,14 @@
 #include <ctype.h>
 #include "read.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+#define CMD "dir /b *.%s > shell_result" //25
+#endif
+
+#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__unix__)
+#define CMD "ls *.%s > shell_result"
+#endif
+
 void gobble_leading_space(FILE* file) {
     //Remove all leading whitespace from a stream
 	for (int c = 0; (c = getc(file)) != EOF;) {
@@ -112,12 +120,13 @@ char* read_line(FILE* file) {
 
 char** read_lines(const char *filename) {
     //Read lines from a text file and return a pointer to the array of strings
-	int buffer = 50, i = 0;
+	int buffer = 256, i = 0;
 	char *line, **lines = malloc(buffer * sizeof(char*));
 	FILE *file = fopen(filename, "r");
 	if (file) {
 		while ((line = read_line(file))) {
 			lines[i++] = line;
+            printf("%d\n", i);
 			if (i == buffer - 2) {
 				buffer *= 2;
 				char **lines_new = realloc(lines, buffer);
@@ -204,4 +213,15 @@ char* input(const char* prompt) {
     printf("%s", prompt);
     char *line = read_line(stdin);
     return line;
+}
+
+char* scan_folder(const char ext[]) {
+    /*Scan current directory for all files with ext via shell and
+    return a pointer to the string returned by shell*/
+    char cmd[30];
+    sprintf(cmd, CMD, ext);
+    system(cmd);
+    char *shell_result = read_file("shell_result");
+    remove("shell_result");
+    return shell_result;
 }

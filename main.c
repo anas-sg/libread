@@ -1,5 +1,4 @@
 //Example program to test functions from read.h
-#include <stdio.h>
 #include "read.h"
 
 void read_words_test1(void) {
@@ -42,8 +41,16 @@ void read_csv_test(void) {
 
 
 int main(void) {
-    read_words_test1();
-    read_words_test2();
-    read_csv_test();
-    input_test();    
+    // read_words_test1();
+    // read_words_test2();
+    // read_csv_test();
+    // input_test();
+    // printf("%s\n", scan_folder("c"));
+    // unsigned long length = 0;
+    char **lines = read_lines("input.txt");
+    // char **lines = read_lines("test.txt");
+    puts("Done");
+    printf("%s\n", lines[0]);
+    printf("%s\n", lines[1]);
+    printf("%s\n", lines[2]);   
 }

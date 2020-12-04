@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -std=c17
+CFLAGS = -Wall -std=c11
 TARGET = main
 FILES = read.c main.c
 
@@ -12,5 +12,5 @@ $(TARGET): $(FILES)
 
 run:
 	$(info Running $(TARGET)...)
-	$(TARGET) #win
-# 	./$(TARGET) #linux
+# 	$(TARGET) #win
+	./$(TARGET) #linux

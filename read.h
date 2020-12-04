@@ -16,5 +16,6 @@ char** read_lines(const char* filename);
 char* read_file(const char* filename);
 char*** read_csv(const char* filename, const char delimiter);
 char* input(const char* prompt);
+char* scan_folder(const char* ext);
 
 #endif  //READ_H
