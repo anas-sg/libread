@@ -13,7 +13,7 @@
 #define CMD "ls *.%s > shell_result"
 #endif
 
-void gobble_leading_space(FILE* file) {
+void gobble_leading_space(FILE *file) {
     //Remove all leading whitespace from a stream
 	for (int c = 0; (c = getc(file)) != EOF;) {
 		if (!isspace(c)) {
@@ -23,7 +23,7 @@ void gobble_leading_space(FILE* file) {
 	}
 }
 
-void gobble_trailing_space(char* string, int* i) {
+void gobble_trailing_space(char *string, unsigned int *i) {
     //Remove all trailing whitespace from a string
 	int j = *i;
 	while (isspace(string[j-1])) {
@@ -32,10 +32,10 @@ void gobble_trailing_space(char* string, int* i) {
 	*i = j;
 }
 
-char* read_word(FILE* file) {
+char* read_word(FILE *file) {
     //Read a word from a stream and return a pointer to the string
 	gobble_leading_space(file);
-	int buffer = 10, i = 0;
+	unsigned int buffer = 10, i = 0;
 	char *word = malloc(buffer * sizeof(char));
 	for (int c = 0; !isspace(c = getc(file)) && c!= EOF;) {
 		word[i++] = c;
@@ -58,12 +58,12 @@ char* read_word(FILE* file) {
 	return NULL;
 }
 
-char** read_words(FILE* file, const char* delimiters) {
+char** read_words(FILE *file, const char *delimiters) {
     /*Read a line from a stream and return a pointer to the array of words
     * split based on delimiters specified in the array pointed to by delimiters, 
     * or, in the case of a NULL pointer, split based on space and/or punctuation 
     * marks: .,:;-!?'"*/    
-    int buffer = 50, i = 0;
+    unsigned int buffer = 50, i = 0;
     char *line = read_line(file), **words = malloc(buffer * sizeof(char*));
     if (!delimiters) {
         delimiters = " ,.:;-!?'\"";
@@ -91,10 +91,10 @@ char** read_words(FILE* file, const char* delimiters) {
     return NULL;
 }
 
-char* read_line(FILE* file) {
+char* read_line(FILE *file) {
     //Read a line from a stream and return a pointer to the string
 	gobble_leading_space(file);
-	int buffer = 50, i = 0;
+	unsigned int buffer = 50, i = 0;
 	char *line = malloc(buffer * sizeof(char));
 	for (int c = 0; (c = getc(file)) != '\n' && c != EOF;) {
 		line[i++] = c;		
@@ -120,11 +120,12 @@ char* read_line(FILE* file) {
 
 char** read_lines(const char *filename) {
     //Read lines from a text file and return a pointer to the array of strings
-	int buffer = 256, i = 0;
+	unsigned int buffer = 256, i = 0;
 	char *line, **lines = malloc(buffer * sizeof(char*));
 	FILE *file = fopen(filename, "r");
 	if (file) {
 		while ((line = read_line(file))) {
+            printf("Reading line ");
 			lines[i++] = line;
             printf("%d\n", i);
 			if (i == buffer - 2) {
@@ -132,6 +133,7 @@ char** read_lines(const char *filename) {
 				char **lines_new = realloc(lines, buffer);
 				if (lines_new) {
 					lines = lines_new;
+                    puts("realloc passed");
 				}
 				else {
 	    			perror("Error");
@@ -149,7 +151,7 @@ char** read_lines(const char *filename) {
 
 char* read_file(const char *filename) {
     //Read a text file into a string and return a pointer to the string
-    int c, i = 0, buffer = 1024;
+    unsigned int c, i = 0, buffer = 1024;
     char *txt = malloc(buffer * sizeof(char));
     FILE *file = fopen(filename, "r");
     if (file) {
@@ -176,10 +178,10 @@ char* read_file(const char *filename) {
     return NULL;    
 }
 
-char*** read_csv(const char* filename, const char delimiter) {
+char*** read_csv(const char *filename, const char delimiter) {
     /*Read a csv file and return a pointer to the array of arrays of strings
     * split based on delimiter*/
-    int i = 0, buffer = 50;
+    unsigned int i = 0, buffer = 50;
     char ***csv = malloc(buffer * sizeof(char**)), **values;
     FILE *file = fopen(filename, "r");
     if (file) {
@@ -207,7 +209,7 @@ char*** read_csv(const char* filename, const char delimiter) {
     return NULL;
 }
 
-char* input(const char* prompt) {
+char* input(const char *prompt) {
     /*Print a prompt to and read a line from standard input and return a pointer 
     * to the string*/
     printf("%s", prompt);
@@ -215,7 +217,7 @@ char* input(const char* prompt) {
     return line;
 }
 
-char* scan_folder(const char ext[]) {
+char* scan_folder(const char *ext) {
     /*Scan current directory for all files with ext via shell and
     return a pointer to the string returned by shell*/
     char cmd[30];
