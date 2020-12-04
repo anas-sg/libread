@@ -16,4 +16,12 @@ char*** read_csv(const char *filename, const char delimiter);
 char* input(const char *prompt);
 char* scan_folder(const char *ext);
 
+#if defined(_WIN32) || defined(_WIN64)
+#define CMD "dir /b *.%s > shell_result" //25
+#endif
+
+#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__unix__)
+#define CMD "ls *.%s > shell_result"
+#endif
+
 #endif  //READ_H

@@ -1,18 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <ctype.h>
-#include "read.h"
-
-#if defined(_WIN32) || defined(_WIN64)
-#define CMD "dir /b *.%s > shell_result" //25
-#endif
-
-#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__) || defined(__unix__)
-#define CMD "ls *.%s > shell_result"
-#endif
-
 static void gobble_leading_space(FILE *file) {
     //Remove all leading whitespace from a stream
 	for (int c = 0; (c = getc(file)) != EOF;) {
