@@ -7,8 +7,6 @@
 #include <errno.h>
 #include <ctype.h>
 
-void gobble_leading_space(FILE *file);
-void gobble_trailing_space(char *string, unsigned int *i);
 char* read_word(FILE *file);
 char** read_words(FILE *file, const char *delimiters);
 char* read_line(FILE *file);

@@ -13,7 +13,7 @@
 #define CMD "ls *.%s > shell_result"
 #endif
 
-void gobble_leading_space(FILE *file) {
+static void gobble_leading_space(FILE *file) {
     //Remove all leading whitespace from a stream
 	for (int c = 0; (c = getc(file)) != EOF;) {
 		if (!isspace(c)) {
@@ -23,9 +23,9 @@ void gobble_leading_space(FILE *file) {
 	}
 }
 
-void gobble_trailing_space(char *string, unsigned int *i) {
+static void gobble_trailing_space(char *string, unsigned int *i) {
     //Remove all trailing whitespace from a string
-	int j = *i;
+	unsigned int j = *i;
 	while (isspace(string[j-1])) {
 		j--;
 	}
