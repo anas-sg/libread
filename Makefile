@@ -12,5 +12,4 @@ $(TARGET): $(FILES)
 
 run:
 	$(info Running $(TARGET)...)
-# 	$(TARGET) #win
-	./$(TARGET) #linux
+	./$(TARGET)
